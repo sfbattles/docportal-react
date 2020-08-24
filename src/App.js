@@ -5,6 +5,7 @@ import makeAnimated from "react-select/animated";
 import "bootstrap/dist/css/bootstrap.min.css";
 import shortid from 'shortid';
 
+const LineOfBusinesses = [{}]
 
 const documentTypeOptions = [
   { value: "New Business", label: "📃 New Business",id: shortid.generate(),modelfield: "transaction_type"},
@@ -22,13 +23,19 @@ function App() {
     '__icontains[]=',
     '__gte',
     '__lte',
-    '='
+    '=',
+    '__in=',
   ]
+
+  
   let queryParams = "?"
   const buildSearchParam = () => {
     for (const [index, item] of docSearchTypeList.entries()) {
-      if (index > 0)
-        queryParams += '&' + item.modelfield + searchFilter[0] + item.value
+      if (docSearchTypeList.length > 1)
+        if (index === 0)
+          queryParams += `${item.modelfield}${searchFilter[4]}${item.value}`
+        else
+          queryParams += `,${item.modelfield}${item.value}`
       else
         queryParams += item.modelfield + searchFilter[0] + item.value
     }
@@ -77,17 +84,17 @@ function App() {
     <div className="row">
       <div className="col-md-8 mx-auto">
       <Select className="mt-4 col-md-8 col-offset-4" 
-        onChange={setDocumentSearchType}
-        placeholder="Select Policy Number"
-        options={documentTypeOptions}
-        components={makeAnimated()}
-        isMulti
-        isSearchable
-        autoFocus
-        value={docSearchTypeList}
-        noOptionsMessage={() => "No Other Document Type"}
-        theme={customTheme}
-      />
+          onChange={setDocumentSearchType}
+          placeholder="Select Line Of Business"
+          options={documentTypeOptions}
+          components={makeAnimated()}
+          isMulti
+          isSearchable
+          autoFocus
+          value={docSearchTypeList}
+          noOptionsMessage={() => "No Other Document Type"}
+          theme={customTheme}
+        />
         <Select className="mt-4 col-md-8 col-offset-4" 
           onChange={setDocumentSearchType}
           placeholder="Select Document Type"
@@ -101,7 +108,6 @@ function App() {
           theme={customTheme}
         />
         <div className="mb-4"></div>
-        <PrintState/>
         <div className="col-md-8 mx-auto">
           <button className="btn btn-primay col-md-4" onClick={fetchPolicies}>Search for Policies</button>
         </div>
